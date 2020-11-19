@@ -1,0 +1,8 @@
+#如果应用程序需要保存和存储用户的块，并在以后访问时还原它们，请使用此调用导出到 XML：
+var xml = Blockly.Xml.workspaceToDom(workspace);
+var xml_text = Blockly.Xml.domToText(xml);
+#这将生成一个最小（但丑陋的）字符串，其中包含用户块的 XML。如果希望获得更具可读性（但更大的）字符串，请改为使用。Blockly.Xml.domToPrettyText
+
+从 XML 字符串还原到块同样简单：
+var xml = Blockly.Xml.textToDom(xml_text);
+Blockly.Xml.domToWorkspace(xml, workspace);
