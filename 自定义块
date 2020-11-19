@@ -1,0 +1,70 @@
+#典型的块定义如下所示：
+Blockly.Blocks['string_length'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": 'length of %1',
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "VALUE",
+          "check": "String"
+        }
+      ],
+      "output": "Number",
+      "colour": 160,
+      "tooltip": "Returns number of letters in the provided text.",
+      "helpUrl": "http://www.w3schools.com/jsref/jsref_length_string.asp"
+    });
+  }
+};
+#string_length：这是块的类型名称。由于所有块共享相同的命名空间，因此使用由类别（本例中）和块的函数（本例中为 ） 组成的名称是很好的。stringlength
+#init：此函数定义块的外观
+
+
+#JSON 阵列：可以使用 JSON 块定义数组一次定义多个块
+Blockly.defineBlocksWithJsonArray([
+  // Block for colour picker.
+  {
+    "type": "colour_picker",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_colour",
+        "name": "COLOUR",
+        "colour": "#ff0000"
+      }
+    ],
+    "output": "Colour",
+    "helpUrl": "%{BKY_COLOUR_PICKER_HELPURL}",
+    "style": "colour_blocks",
+    "tooltip": "%{BKY_COLOUR_PICKER_TOOLTIP}",
+    "extensions": ["parent_tooltip_when_inline"]
+  },
+  // Block for random colour.
+  {
+    "type": "colour_random",
+    "message0": "%{BKY_COLOUR_RANDOM_TITLE}",
+    "output": "Colour",
+    "helpUrl": "%{BKY_COLOUR_RANDOM_HELPURL}",
+    "style": "colour_blocks",
+    "tooltip": "%{BKY_COLOUR_RANDOM_TOOLTIP}"
+  }
+]);
+
+
+#定义后，使用类型名称将块引用到工具箱
+<xml id="toolbox" style="display: none">
+  <category name="Text">
+    <block type="string_length"></block>
+  </category>
+  ...
+</xml>
+
+
+#最后，要将块转换为代码，请将块与生成器函数配对。生成器特定于所需的输出语言，但标准生成器通常采用以下格式：
+Blockly.JavaScript['text_length'] = function(block) {
+  // String or array length.
+  var argument0 = Blockly.JavaScript.valueToCode(block, 'VALUE',
+      Blockly.JavaScript.ORDER_FUNCTION_CALL) || '\'\'';
+  return [argument0 + '.length', Blockly.JavaScript.ORDER_MEMBER];
+};
