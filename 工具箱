@@ -1,0 +1,146 @@
+#下面是一个使用节点树的最小示例：（3种表达）
+#xml形式
+<xml id="toolbox" style="display: none">
+  <block type="controls_if"></block>
+  <block type="controls_whileUntil"></block>
+</xml>
+<script>
+  var workspace = Blockly.inject('blocklyDiv',
+      {toolbox: document.getElementById('toolbox')});
+</script>
+#xml字符串形式
+<script>
+  var toolbox = '<xml>';
+  toolbox += '  <block type="controls_if"></block>';
+  toolbox += '  <block type="controls_whileUntil"></block>';
+  toolbox += '</xml>';
+  var workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+</script>
+#Json形式
+{
+  "kind": "flyoutToolbox",
+  "contents": [
+    {
+      "kind": "block",
+      "type": "controls_if"
+    },
+    {
+      "kind": "block",
+      "type": "controls_whileUntil"
+    }
+  ]
+}
+
+
+#工具箱中的块可以按类别进行组织。下面是两个类别（"控制"和"逻辑"），每个类别都包含三个块
+{
+  "kind": "categoryToolbox",
+  "contents": [
+    {
+      "kind": "category",
+      "name": "Control",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "controls_if"
+        },
+        {
+          "kind": "block",
+          "type": "controls_whileUntil"
+        },
+        {
+          "kind": "block",
+          "type": "controls_for"
+        }
+      ]
+    },
+    {
+      "kind": "category",
+      "name": "Logic",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "logic_compare"
+        },
+        {
+          "kind": "block",
+          "type": "logic_operation"
+        },
+        {
+          "kind": "block",
+          "type": "logic_boolean"
+        }
+      ]
+    }
+  ]
+}
+
+
+#可以使用类别 ID 从工具箱中检索类别。可以在工具箱定义中设置类别 ID
+{
+  "kind": "category",
+  "name": "...",
+  "toolboxitemid": "categoryId"
+}
+#从工具箱访问类别：
+var category = toolbox.getToolboxItemById('categoryId');
+
+
+#可以使用可选属性为每个类别分配颜色。注意英国的拼写。颜色是定义色调的数字 （0-360）
+{
+  "contents": [
+    {
+      "kind": "category",
+      "name": "Logic",
+      "colour": "210"
+    },
+    {
+      "kind": "category",
+      "name": "Loops",
+      "colour": "120"
+    }
+  ]
+}
+
+
+#如果您已经开始使用 Blockly 主题，则需要添加属性而不是如下所示的属性
+{
+  "kind": "category",
+  "name": "Logic",
+  "categorystyle": "logic_category"
+}
+
+
+#类别 CSS（有图片）
+{
+  "kind": "category",
+  "name": "...",
+  "cssConfig": {
+    "container": "yourClassName"
+  }
+}
+#禁用类别将不允许用户单击该类别，如果用户使用键盘导航工具箱，将跳过该类别。在 div 上设置了 CSS 属性，允许您控制禁用类别的外观
+var category = toolbox.getToolboxItems()[0];
+category.setDisabled('true');
+<style>
+  .blocklyToolboxCategory[disabled="true"] {
+    opacity: .5;
+  }
+</style>
+#首次注入工具箱时，可以隐藏类别
+{
+  "kind": "category",
+  "name": "...",
+  "hidden": "true"
+}
+#有两类具有特殊行为。变量和函数类别的定义没有内容，但属性为 或。这些类别将自动填充相应的块
+{
+  "kind": "category",
+  "name": "Variables",
+  "custom": "VARIABLE"
+},
+{
+  "kind": "category",
+  "name": "Functions",
+  "custom": "PROCEDURE"
+}
