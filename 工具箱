@@ -32,6 +32,7 @@
 }
 
 
+
 #工具箱中的块可以按类别进行组织。下面是两个类别（"控制"和"逻辑"），每个类别都包含三个块
 {
   "kind": "categoryToolbox",
@@ -76,6 +77,7 @@
 }
 
 
+
 #可以使用类别 ID 从工具箱中检索类别。可以在工具箱定义中设置类别 ID
 {
   "kind": "category",
@@ -86,7 +88,8 @@
 var category = toolbox.getToolboxItemById('categoryId');
 
 
-#可以使用可选属性为每个类别分配颜色。注意英国的拼写。颜色是定义色调的数字 （0-360）
+
+#可以使用可选颜色属性为每个类别指定一种颜色。注意英国的拼写。颜色是定义色调的数字（0-360）。
 {
   "contents": [
     {
@@ -103,7 +106,8 @@ var category = toolbox.getToolboxItemById('categoryId');
 }
 
 
-#如果您已经开始使用 Blockly 主题，则需要添加属性而不是如下所示的属性
+
+#如果您已经开始使用Blockly主题，那么您需要添加categorystyle属性，而不是如下所示的colour属性。
 {
   "kind": "category",
   "name": "Logic",
@@ -119,7 +123,7 @@ var category = toolbox.getToolboxItemById('categoryId');
     "container": "yourClassName"
   }
 }
-#禁用类别将不允许用户单击该类别，如果用户使用键盘导航工具箱，将跳过该类别。在 div 上设置了 CSS 属性，允许您控制禁用类别的外观
+#禁用类别将不允许用户单击该类别，如果用户正在使用键盘导航工具箱，则会跳过该类别。在blocklyToolboxCategory div上设置了一个CSS属性，允许您控制禁用类别的外观，如下所示。
 var category = toolbox.getToolboxItems()[0];
 category.setDisabled('true');
 <style>
@@ -144,3 +148,320 @@ category.setDisabled('true');
   "name": "Functions",
   "custom": "PROCEDURE"
 }
+
+
+
+#开发人员还可以使用自定义属性创建动态填充的弹出型按钮类别。例如，要创建带有自定义色块集的弹出型按钮：
+<category name="Colours" custom="COLOUR_PALETTE"></category>
+/**
+ * Construct the blocks required by the flyout for the colours category.               #为颜色类别构建弹出按钮所需的块。
+ * @param {!Blockly.Workspace} workspace The workspace this flyout is for.             #param workspace此弹出按钮用于的工作区。
+ * @return {!Array.<!Element>} Array of XML block elements.                            #返回XML块元素的数组。
+ */
+myApplication.coloursFlyoutCallback = function(workspace) {
+  // Returns an array of hex colours, e.g. ['#4286f4', '#ef0447']                      #返回一个十六进制颜色的数组，例如[“#4286f4'，'#ef0447']
+  var colourList = myApplication.getPalette();
+  var xmlList = [];
+  if (Blockly.Blocks['colour_picker']) {
+    for (var i = 0; i < colourList.length; i++) {
+      var blockText = '<block type="colour_picker">' +
+          '<field name="COLOUR">' + colourList[i] + '</field>' +
+          '</block>';
+      var block = Blockly.Xml.textToDom(blockText);
+      xmlList.push(block);
+    }
+  }
+  return xmlList;
+};
+#在工作区上注册回调。
+myWorkspace.registerToolboxCategoryCallback(
+  'COLOUR_PALETTE', myApplication.coloursFlyoutCallback);
+#如果使用类型化变量，则需要将variabletype添加到变量字段中。
+<block type="vars_set">
+  <field name="VAR_SET" variabletype="panda"></field>
+</block>
+
+
+
+#类别可以嵌套在其他类别中。下面是两个顶级类别（"核心"和"自定义"），每个类别都包含两个子类别，每个子类别都包含块：
+{
+  "kind": "categoryToolbox",
+  "contents": [
+    {
+      "kind": "category",
+      "name": "Core",
+      "contents": [
+        {
+          "kind": "category",
+          "name": "Control",
+          "contents": [
+            {
+              "kind": "block",
+              "type": "controls_if"
+            },
+            {
+              "kind": "block",
+              "type": "controls_whileUntil"
+            }
+          ]
+        },
+        {
+          "kind": "category",
+          "name": "Logic",
+          "contents": [
+            {
+              "kind": "block",
+              "type": "logic_compare"
+            },
+            {
+              "kind": "block",
+              "type": "logic_operation"
+            },
+            {
+              "kind": "block",
+              "type": "logic_boolean"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "category",
+      "name": "Custom",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "start"
+        },
+        {
+          "kind": "category",
+          "name": "Move",
+          "contents": [
+            {
+              "kind": "block",
+              "type": "move_forward"
+            },
+            {
+              "kind": "block",
+              "type": "move_backward"
+            }
+          ]
+        },
+        {
+          "kind": "category",
+          "name": "Turn",
+          "contents": [
+            {
+              "kind": "block",
+              "type": "turn_left"
+            },
+            {
+              "kind": "block",
+              "type": "turn_right"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+
+#扩大：默认情况下，加载 Blockly 时显示类别折叠，但类别可能使用
+{
+  "kind": "category",
+  "name": "...",
+  "expanded": "true"
+}
+ 
+ 
+
+#预设块：工具箱定义可能包含将字段设置为默认值的块，或者具有已连接在一起的块（图片）
+<xml id="toolbox" style="display: none">   #1                                 
+  <block type="logic_boolean"></block>
+
+  <block type="math_number">               #2
+    <field name="NUM">42</field>
+  </block>
+
+  <block type="controls_for">              #3
+    <value name="FROM">
+      <block type="math_number">
+        <field name="NUM">1</field>
+      </block>
+    </value>
+    <value name="TO">
+      <block type="math_number">
+        <field name="NUM">10</field>
+      </block>
+    </value>
+    <value name="BY">
+      <block type="math_number">
+        <field name="NUM">1</field>
+      </block>
+    </value>
+  </block>
+
+  <block type="math_arithmetic">          #4
+    <field name="OP">ADD</field>
+    <value name="A">
+      <shadow type="math_number">
+        <field name="NUM">1</field>
+      </shadow>
+    </value>
+    <value name="B">
+      <shadow type="math_number">
+        <field name="NUM">1</field>
+      </shadow>
+    </value>
+  </block>
+</xml>
+#预置块和连接块可以在JSON中使用blockxml属性指定（如上述的1和2）
+{
+  "kind": "block",
+  "blockxml": "<block type='math_number'><field name='NUM'>42</field></block>"
+}
+#只有在更改字段值或将块连接在一起时，才需要这样做。如果不需要执行上述任一操作，则可以使用type。
+{
+  "kind": "block",
+  "type": "math_number"
+}
+
+
+
+#阴影块：
+  #阴影块是执行以下几个功能的占位符块：
+  #它们指示其父块的默认值。
+  #它们允许用户直接键入值，而无需获取数字或字符串块。
+  #与常规块不同，如果用户将块放在它们上面，则替换它们。
+  #它们通知用户预期值的类型。
+  #不能直接用代码应用程序构造阴影块。相反，可以使用常规块，然后将XML中的<block…>和</block>更改为<shadow…>和</shadow>。
+  #注意：阴影块可能不包括变量字段，或者具有不也是阴影的子项。
+ 
+ 
+#大多数字段很容易在工具箱中设置，只需要name属性及其值
+   <field name="NUM">1</field>
+#但是，变量具有其他可选属性，这些属性会影响它们的创建方式。变量字段可以有id和variabletype。注意variabletype不使用camelCase。
+   <field name="VAR" id=".n*OKd.u}2UD9QFicbEX" variabletype="Panda">Bai Yun</field>
+#如果设置了一个id，那么在创建块时，variabletype（如果设置）和值必须与任何具有该id的现有变量相匹配。如果不存在具有该id的变量，
+#则将创建一个新变量。一般来说，这个id不应该包含在工具箱XML中。如果变量具有相同的值和variabletype，则省略id将允许变量引用现有变量。
+#如果变量类型被设置为变量类型，则变量类型将被创建。如果未设置variabletype，则变量将具有默认的“”类型。如果使用类型化变量，则必须设
+#置variabletype，因为Blockly不会推断类型。
+
+
+
+#在两个类别之间添加分隔符将在两个类别之间创建一行和额外的空格
+{
+  "kind": "sep",
+  "cssConfig": {
+    "container": "yourClassName"
+  }
+}
+#在任何两个块之间添加分隔符将在块之间创建间隙。默认情况下，每个块与下部邻居相隔 24 像素。此分隔可能会使用"间隙"属性更改，该属性将替换默认间隙
+{
+  "kind": "flyoutToolbox",
+  "contents": [
+    {
+      "kind": "block",
+      "type":"math_number"
+    },
+    {
+      "kind": "sep",
+      "gap": "32"     #上下块隔离32单位长度
+    },
+    {
+      "kind": "block",
+      "blockxml": "<block type='math_arithmetic'><field name='OP'>ADD</field></block>"
+    },
+    {
+      "kind": "sep",
+      "gap": "8"      #上下块隔离8单位长度
+    },
+    {
+      "kind": "block",
+      "blockxml": "<block type='math_arithmetic'><field name='OP'>MINUS</field></block>"
+    }
+  ]
+}
+
+
+#您可以将按钮或标签放在工具箱中的任意位置
+{
+  "kind": "flyoutToolbox",
+  "contents": [
+    {
+      "kind": "block",
+      "type":"logic_operation"
+    },
+    {
+      "kind": "label",
+      "text": "A label",
+      "web-class": "myLabelStyle"       #改为自定义字体
+    },
+    {
+      "kind": "label",
+      "text": "Another label"
+    },
+    {
+      "kind": "block",
+      "type": "logic_negate"
+    },
+    {
+      "kind": "button",
+      "text": "A button",
+      "callbackKey": "myFirstButtonPressed"
+    },
+    {
+      "kind": "block",
+      "type": "logic_boolean"
+    }
+  ]
+}
+#更改字体
+<style>
+    .myLabelStyle>.blocklyFlyoutLabelText {
+      font-style: italic;    #斜体
+      fill: green;
+    }
+    </style>
+#按钮应具有回调函数;标签不应。要设置给定按钮的回调，请使用
+yourWorkspace.registerButtonCallback(yourCallbackKey, yourFunction).
+#函数应接受单击的按钮作为参数。"创建变量..."变量类别中的按钮是具有回调的按钮的一个很好的示例
+
+
+
+#工具箱中的块可以使用可选的disabled属性单独禁用：
+{
+  "kind": "flyoutToolbox",
+  "contents": [
+    {
+      "kind": "block",
+      "type":"math_number"
+    },
+    {
+      "kind": "block",
+      "type": "math_arithmetic"
+    },
+    {
+      "kind": "block",
+      "type": "math_single",
+      "disabled": "true"
+    }
+  ]
+}
+#禁用块可用于限制用户的选择。也许高级积木可以在某些成就后解锁。
+#可以使用setEnabled以编程方式禁用或启用块。
+Blockly.selected.setEnabled(true);
+
+
+#应用程序可能随时通过单个函数调用更改工具箱中可用的块
+    workspace.updateToolbox(newTree);
+#与初始配置期间的情况一样，newTree可以是节点树、字符串表示或
+#JSON对象。唯一的限制是不能更改模式；也就是说，如果最初定义的
+#工具箱中有类别，则新工具箱也必须具有类别（尽管类别可能会更改）
+#同样，如果最初定义的工具箱没有任何类别，则新工具箱可能没有任何类别。
+
+#单个类别的内容可以按以下情况进行更新：
+var category = toolbox.getToolboxItems()[0];
+category.updateFlyoutContents(flyoutContents);
+#其中，"退出内容"可以是使用 JSON、节点树或字符串表示形式定义的块列表。
